@@ -4,7 +4,6 @@
 
 ## Inicio: Clonar el template para contratos inteligentes
 
-### Agrega las siguientes dependencias.
 **comando:**
 ```bash
 
