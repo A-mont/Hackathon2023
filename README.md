@@ -47,8 +47,11 @@ impl Metadata for ContractMetadata{
 ### PASO 1 Definir en el interior de la función Handle y definimos Acción->Transición->Evento.
 **comando:**
 ```rust
+#[no_mangle]
+extern "C" fn handle(){
 
-let input_message: Action = msg::load()
+
+    let input_message: Action = msg::load()
         .expect("Error in loading InputMessages");
    
 
@@ -62,6 +65,8 @@ let input_message: Action = msg::load()
            
         }
     }
+
+}
 ```
 
 ## Despliega el contrato en la plataforma IDEA e interactua con tu contrato.
