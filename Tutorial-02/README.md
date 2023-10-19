@@ -12,14 +12,15 @@ git clone https://github.com/Vara-Lab/SmartContractTemplate_v1.git
 
 ## Directorio IO
 
-### PASO 1 Definir las acciones.
+### PASO 1 Definir las acciones para el semaforo: .
 **comando:**
 ```rust
 #[derive(Encode, Decode, TypeInfo, Hash, PartialEq, PartialOrd, Eq, Ord, Clone, Copy, Debug)]
-pub enum Action {
-    
-    // Add Actions
-    Hello
+pub enum TrafficLight {
+    // Actions
+     Green,
+     Yellow,
+     Red
 }
 
 ```
@@ -31,11 +32,11 @@ pub struct ContractMetadata;
 
 impl Metadata for ContractMetadata{
      type Init = ();
-     type Handle = InOut<Action,String>; // Acciones como entrada y  eventos como salida.
+     type Handle = InOut<TrafficLight,TrafficLight>; // Acciones como entrada y  eventos como salida.
      type Others = ();
      type Reply=();
      type Signal = ();
-     type State = Vec<(ActorId, u128)>; // Estado 
+     type State = Vec<(ActorId, String)>; // Estado 
 
 }
 ```
