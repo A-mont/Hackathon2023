@@ -68,37 +68,40 @@ extern "C" fn handle(){
 
 
 }
-   
+
+    
+
 fn handle_state() -> Result<()> {
 
         let payload = msg::load()?;
 
-        if let TrafficLight::Green = payload {
+        if let ActionTrafficLight::Green = payload {
 
             let currentstate = state_mut();
             currentstate.insert(msg::source(), "Green".to_string());
-            msg::reply(TrafficLight::Green,0)?;
+            msg::reply(EventTrafficLight::Green,0)?;
 
         }
 
-        if let TrafficLight::Yellow = payload {
+        if let ActionTrafficLight::Yellow = payload {
 
             let currentstate = state_mut();
             currentstate.insert(msg::source(), "Yellow".to_string());
-            msg::reply(TrafficLight::Yellow,0)?;
+            msg::reply(EventTrafficLight::Yellow,0)?;
 
         }
 
-        if let TrafficLight::Red = payload {
+        if let ActionTrafficLight::Red = payload {
 
             let currentstate = state_mut();
             currentstate.insert(msg::source(), "Red".to_string());
-            msg::reply(TrafficLight::Red,0)?;
+            msg::reply(EventTrafficLight::Red,0)?;
 
         }
 
     Ok(())
     }
+
 
 ```
 
