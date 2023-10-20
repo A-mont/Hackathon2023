@@ -6,7 +6,6 @@
 
 **comando:**
 ```bash
-
 git clone https://github.com/Vara-Lab/SmartContractTemplate_v1.git
 ```
 
@@ -16,7 +15,7 @@ git clone https://github.com/Vara-Lab/SmartContractTemplate_v1.git
 **comando:**
 ```rust
 #[derive(Encode, Decode, TypeInfo, Hash, PartialEq, PartialOrd, Eq, Ord, Clone, Copy, Debug)]
-pub enum TrafficLight {
+pub enum ActionTrafficLight {
     // Actions
      Green,
      Yellow,
@@ -25,14 +24,27 @@ pub enum TrafficLight {
 
 ```
 
-### PASO 2 Definir los eventos de salida y el estado.
+### PASO 2 Definir las eventos para el semaforo: .
+**comando:**
+```rust
+#[derive(Encode, Decode, TypeInfo, Hash, PartialEq, PartialOrd, Eq, Ord, Clone, Copy, Debug)]
+pub enum EventTrafficLight {
+    // Actions
+     Green,
+     Yellow,
+     Red
+}
+
+```
+
+### PASO 3 Definir las acciones, estado y eventos.
 **comando:**
 ```rust
 pub struct ContractMetadata;
 
 impl Metadata for ContractMetadata{
      type Init = ();
-     type Handle = InOut<TrafficLight,TrafficLight>; // Acciones como entrada y  eventos como salida.
+     type Handle = InOut<ActionTrafficLight,EventTrafficLight>; // Acciones como entrada y  eventos como salida.
      type Others = ();
      type Reply=();
      type Signal = ();
@@ -47,26 +59,47 @@ impl Metadata for ContractMetadata{
 ### PASO 1 Definir en el interior de la función Handle y definimos Acción->Transición->Evento.
 **comando:**
 ```rust
+
 #[no_mangle]
 extern "C" fn handle(){
 
 
-    let input_message: Action = msg::load()
-        .expect("Error in loading InputMessages");
-   
+    handle_state().expect("Execution Error")
 
-    match input_message {
-       
-        Action::Hello => {
-
-            msg::reply(String::from("Hello"), 0)
-            .expect("Error in sending a reply message");
-
-           
-        }
-    }
 
 }
+   
+fn handle_state() -> Result<()> {
+
+        let payload = msg::load()?;
+
+        if let TrafficLight::Green = payload {
+
+            let currentstate = state_mut();
+            currentstate.insert(msg::source(), "Green".to_string());
+            msg::reply(TrafficLight::Green,0)?;
+
+        }
+
+        if let TrafficLight::Yellow = payload {
+
+            let currentstate = state_mut();
+            currentstate.insert(msg::source(), "Yellow".to_string());
+            msg::reply(TrafficLight::Yellow,0)?;
+
+        }
+
+        if let TrafficLight::Red = payload {
+
+            let currentstate = state_mut();
+            currentstate.insert(msg::source(), "Red".to_string());
+            msg::reply(TrafficLight::Red,0)?;
+
+        }
+
+    Ok(())
+    }
+
 ```
 
 ## Despliega el contrato en la plataforma IDEA e interactua con tu contrato.
