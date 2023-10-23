@@ -22,7 +22,7 @@ pub enum EscrowAction {
 
 ```
 
-### PASO 2 Definir las eventos para el semaforo: .
+### PASO 2 Definir las eventos para el contrato: .
 **comando:**
 ```rust
 #[derive(Encode, Decode, TypeInfo)]
