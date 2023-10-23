@@ -1,7 +1,7 @@
 
 #![no_std]
 use gstd::{ prelude::*, ActorId };
-use gmeta::{InOut,Metadata};
+use gmeta::{In, InOut,Metadata};
 
 
 #[derive(Decode,Encode, TypeInfo)]
@@ -44,7 +44,7 @@ pub enum EscrowState {
 pub struct ContractMetadata;
 
 
-impl Metadata for ProgramMetadata {
+impl Metadata for ContractMetadata {
     type Init = In<InitEscrow>; // Definimos el struct que queremos de inicio.
     type Handle = InOut<EscrowAction, EscrowEvent>;
     type Reply = ();
