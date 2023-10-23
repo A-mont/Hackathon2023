@@ -11,6 +11,14 @@ git clone https://github.com/Vara-Lab/SmartContractTemplate_v1.git
 
 ## Directorio IO
 
+## Librerias y dependencias necesarias
+```rust
+#![no_std]
+use gstd::{ prelude::*, ActorId };
+use gmeta::{In, InOut,Metadata}; // Agregamos la dependencia In en gmeta
+```
+
+
 ### PASO 1 Definir las acciones para el contrato: .
 **comando:**
 ```rust
