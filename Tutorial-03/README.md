@@ -122,6 +122,16 @@ fn scrow_state_mut() -> &'static mut Escrow {
 ### PASO 3 Como el estado es un struct podemos hacerle implementaciones.
 **comando:**
 ```rust
+
+
+#[derive(Default, Encode, Decode, TypeInfo)]
+pub struct Escrow {
+    pub seller: ActorId,
+    pub buyer: ActorId,
+    pub price: u128,
+    pub state: EscrowState,
+}
+
 impl Escrow {
     fn deposit(&mut self) {}
     fn confirm_delivery(&mut self) {}
