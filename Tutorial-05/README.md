@@ -15,7 +15,12 @@ git clone https://github.com/Vara-Lab/SmartContractTemplate_v1.git
 ```rust
 #![no_std]
 use gstd::{ prelude::*, ActorId };
-use gmeta::{In, InOut,Metadata}; 
+use gmeta::{InOut,Metadata};
+
+use primitive_types::U256;
+
+pub type TransactionId = u64;
+
 ```
 
 
@@ -156,23 +161,52 @@ pub enum Status {
     Stopped,
 }
 
+#[derive(Debug, Clone, Default, Encode, Decode, TypeInfo)]
+pub struct Transaction<T: Clone> {
+    pub id: TransactionId,
+    pub action: T,
+}
+
 ```
 
+### PASO OPCIONAL(ERRORES). Definir errores personalizados para tener un mejor control de los eventos del contrato.
+```rust
+/// An enum that contains a error of processed [`Action`].
+#[derive(Debug, Clone, Encode, Decode, TypeInfo)]
+pub enum Error {
+    PreviousTxMustBeCompleted,
+    SendingError,
+    NftValidateFailed,
+    NftTransferFailed,
+    NftOwnerFailed,
+    NftNotApproved,
+    NotRewarded,
+    WrongReply,
+    RewardSendFailed,
+    NotOwner,
+    AlreadyRunning,
+    StartPriceLessThatMinimal,
+    AlreadyStopped,
+    InsufficientMoney,
+    Expired,
+    WrongState,
+    IncorrectRewarder,
+}
+
+```
 
 ### PASO 4 Definir las acciones, estado y eventos.
 **comando:**
 ```rust
-use crate::auction::{Action, AuctionInfo, Error, Event};
+pub struct ContractMetadata;
 
-pub struct AuctionMetadata;
-
-impl Metadata for AuctionMetadata {
+impl Metadata for ContractMetadata {
     type Init = ();
     type Handle = InOut<Action, Result<Event, Error>>;
     type Others = ();
     type Reply = ();
     type Signal = ();
-    type State = Out<AuctionInfo>;
+    type State = AuctionInfo;
 }
 ```
 
@@ -180,11 +214,34 @@ impl Metadata for AuctionMetadata {
 ## Directorio src
 
 
+### PASO 0 Importamos dependencias necesarias en el Src para el contrato de subasta:
+```rust
+use core::cmp::min;
+use gmeta::Metadata;
+use gstd::ActorId;
+use gstd::{errors::Result as GstdResult, exec, msg, prelude::*, MessageId};
+use primitive_types::U256;
+use nft_io::{NFTAction, NFTEvent};
+use io::*;
+```
+
 ### PASO 1 Definimos el estado de la subasta.
 **comando:**
 ```rust
 static mut AUCTION: Option<Auction> = None;
 
+```
+
+### PASO 1.1 Definimos la mutabilidad del estado definido anteriormente
+**comando:**
+```rust
+fn common_state() -> <ContractMetadata as Metadata>::State {
+    static_mut_state().info()
+}
+
+fn static_mut_state() -> &'static mut Auction {
+    unsafe { AUCTION.get_or_insert(Default::default()) }
+}
 ```
 
 ### PASO 2 Creamos las estructuras necesarias para NFT y la subasta.
